@@ -7,4 +7,6 @@
 <a href="mailto:contact@dieseraaron.com"><img src="assets/link-email.svg" height="36" alt="email"></a>&nbsp;
 <a href="https://discord.com/users/834007004979658782"><img src="assets/link-discord.svg" height="36" alt="discord"></a>
 
+<img src="assets/activity.svg" width="100%" alt="github activity">
+
 </div>
