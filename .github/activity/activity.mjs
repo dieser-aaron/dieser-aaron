@@ -1,5 +1,3 @@
-// draws assets/activity.svg: the last year of contributions as an ascii calendar in the site's style.
-// no dependencies. needs GITHUB_TOKEN (the action passes it), or a logged in `gh` locally.
 import fs from "node:fs";
 import path from "node:path";
 import { execSync } from "node:child_process";
@@ -25,7 +23,6 @@ const cal = json.data.user.contributionsCollection.contributionCalendar;
 const weeks = cal.weeks.map((w) => w.contributionDays);
 const total = cal.totalContributions;
 
-/* ── look (same tokens as the site) ── */
 const C = { bg: "#09090d", fg: "#eceef4", muted: "#a3a7b8", dim: "#646879", accent: "#a9bcff", online: "#7ed7a5", card: "rgba(10,10,15,.62)" };
 const LV = {
   NONE: [".", "rgba(236,238,244,.14)"],
@@ -64,7 +61,6 @@ kf("cl", "from{opacity:0}to{opacity:1}");
 kf("vis", "0%,100%{visibility:visible}");
 kf("hid", "0%,100%{visibility:hidden}");
 
-// background and a few twinkling stars outside the card
 body.push(`<g clip-path="url(#frame)"><rect width="${W}" height="${H}" fill="${C.bg}"/>`);
 for (let i = 0; i < 46; i++) {
   const x = rnd() * W, y = rnd() * H;
@@ -74,11 +70,9 @@ for (let i = 0; i < 46; i++) {
   body.push(text(x, y, g, { size: 9, fill: rnd() > 0.7 ? "#9aa6d6" : "#5a5e70", cls: "tw", style: `animation-duration:${n2(2 + rnd() * 5)}s;animation-delay:-${n2(rnd() * 6)}s` }));
 }
 
-// card
 body.push(`<g filter="url(#shadow)"><rect x="${cx}" y="${cy}" width="${cwid}" height="${ch}" rx="18" fill="${C.card}"/></g>`);
 body.push(`<rect x="${cx}" y="${cy}" width="${cwid}" height="${ch}" rx="18" fill="none" stroke="rgba(255,255,255,0.06)"/>`);
 
-// title scrambles in, the total counts up
 const head = [];
 {
   const str = "activity", glyphs = "#%&*+=-:.<>/|~", total2 = 16, step = 0.032, delay = 0.25;
@@ -100,7 +94,6 @@ head.push(text(numX, headY - 2, total.toLocaleString("en-US"), { size: 14, weigh
 head.push(text(gx1, headY - 2, label.trim(), { size: 12, fill: C.dim, anchor: "end" }));
 body.push(`<g class="rv" style="animation-delay:.1s">${head.join("")}</g>`);
 
-// month labels, like github: at the first week of each month, skipped when too close to the next
 const marks = [];
 weeks.forEach((w, i) => {
   const m = Number(w[0].date.slice(5, 7)) - 1;
@@ -114,11 +107,9 @@ marks.forEach(([i, m], k) => {
 });
 body.push(`<g class="rv" style="animation-delay:.2s">${months.join("")}</g>`);
 
-// weekday labels
 const days = [[1, "mon"], [3, "wed"], [5, "fri"]].map(([d, s]) => text(cx + P, gridY + d * rowH + 10, s, { size: 10, fill: C.dim }));
 body.push(`<g class="rv" style="animation-delay:.2s">${days.join("")}</g>`);
 
-// the calendar: one ascii cell per day, columns wash in left to right
 const grid = [];
 let last = null;
 weeks.forEach((w, i) => {
@@ -133,14 +124,12 @@ weeks.forEach((w, i) => {
 });
 body.push(`<g font-size="${fsz}">${grid.join("")}</g>`);
 
-// today pings like the "active" dot on the site
 if (last) {
   css.push(`.pg{animation:pg 2.4s cubic-bezier(0,0,.2,1) infinite;transform-box:fill-box;transform-origin:center}`);
   kf("pg", "0%{transform:scale(.6);opacity:.8}80%,100%{transform:scale(2.2);opacity:0}");
   body.push(`<circle cx="${n2(last.x)}" cy="${n2(last.y - 4)}" r="5" fill="none" stroke="${C.accent}" stroke-width="1.2" class="pg"/>`);
 }
 
-// legend
 const lg = [];
 let lx = gx1;
 const items = ["FOURTH_QUARTILE", "THIRD_QUARTILE", "SECOND_QUARTILE", "FIRST_QUARTILE", "NONE"];
